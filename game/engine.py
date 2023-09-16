@@ -1,5 +1,6 @@
 from enum import Enum, auto
 
+# this is the game engine for my implementation of Game of the Amazons. At some point I'm going to add AI support.
 
 class Piece(Enum):
     empty = auto()
@@ -9,10 +10,9 @@ class Piece(Enum):
 
 class GameState: 
 
-    def __init__(self, w, h) -> None:
-        self.width = w
-        self.height = h
-        self.game = [[Piece.empty for x in range(w)] for y in range(h)]
+    def __init__(self, size) -> None:
+        self.width = self.height = size
+        self.game = [[Piece.empty for x in range(self.width)] for y in range(self.height)]
         self.counter =  Turn()
 
     def newGame(self):

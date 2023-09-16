@@ -16,7 +16,7 @@ def main():
     pg.init()
     screen = pg.displayset_mode((WIDTH, HEIGHT))
     gameTime = pg.time.Clock
-    game = engine.GameState()
+    game = engine.GameState(GAME_SIZE)
     loadAssets()
     running = True
     
