@@ -1,5 +1,5 @@
 from enum import Enum, auto
-import numpy as np
+
 
 class Piece(Enum):
     empty = auto()
@@ -34,13 +34,15 @@ class GameState:
         else:
             return False
 
-    def generateMoveValidationSet(self, x, y):
+    def getValidMoveset(self, queen):
 
-        def isEmpty(input):
+        def isEmpty(input):                         # check if target tile is empty
             if input == Piece.empty:
                 return True
             else: return False
 
+        x = queen.x
+        y = queen.y
         valid = []
 
         for i in range(x, 9):                       # horizontal range check
@@ -60,25 +62,28 @@ class GameState:
             if isEmpty(self.game[x][i]) == True:
                 valid.append([x, i])
             else: break
-
-        # diagonal range validation. squares are [x+i,y+i][x+i,y-i][x-i,y+i][x-i,y-i]. TODO: fix loop syntax
-        for i, j in range(x, 9), range(y, 9):       # x+i,y+i
-            if isEmpty(self.game[i][j]) == True:
-                valid.append([i, j])
+                                                    # diagonal range checks
+        for i in range(0, 9):       # x+i,y+i
+            if isEmpty(self.game[x+i][y+i]) == True:
+                valid.append([x+i, y+i])
             else: break
-        for i, j in range(x, 9), range(y, 0, -1):       # x+i,y-i
-            if isEmpty(self.game[i][j]) == True:
-                valid.append([i, j])
+        for i in range(0, 9):       # x+i,y-i
+            if isEmpty(self.game[x+i][y-i]) == True:
+                valid.append([x+i, y-i])
             else: break
-        for i, j in range(x, 0, -1), range(y, 9):       # x-i,y+i
-            if isEmpty(self.game[i][j]) == True:
-                valid.append([i, j])
+        for i in range(0, 9):       # x-i,y+i
+            if isEmpty(self.game[x-i][y+i]) == True:
+                valid.append([x-i, y+i])
             else: break
-        for i, j in range(x, 0, -1), range(y, 0, -1):       # x-i,y-i
-            if isEmpty(self.game[i][j]) == True:
-                valid.append([i, j])
+        for i in range(0, 9):       # x-i,y-i
+            if isEmpty(self.game[x-i][y-i]) == True:
+                valid.append([x-i, y-i])
             else: break
-        return valid
+        if valid:                                   #update list of valid moves. If none, mark the queen as dead
+            queen.moves = valid
+        else:
+            queen.moves = valid
+            queen.dead = True
 
 class Turn:
 
@@ -92,3 +97,13 @@ class Turn:
         else: return 'Black'
     def reset(self):
         self.turnNum=0
+
+class Queen:
+    
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+        self.moves = GameState.getValidMoveset(self.x, self.y)
+        self.dead = False
+    
+
