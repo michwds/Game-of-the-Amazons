@@ -85,7 +85,7 @@ class GameState:
             queen.moves = valid
             queen.dead = True
 
-class Turn:
+class Turn:                     # turn number tracker
 
     def __init__(self) -> None:
         self.turnNum = 0
@@ -98,7 +98,7 @@ class Turn:
     def reset(self):
         self.turnNum=0
 
-class Queen:
+class Queen:                    # data holder helper class to use for gamestate checks later
     
     def __init__(self, x, y) -> None:
         self.x = x

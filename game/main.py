@@ -20,7 +20,7 @@ def main():
     loadAssets()
     running = True
     
-    while running:
+    while running:                      # main game loop
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -28,7 +28,7 @@ def main():
         gameTime.tick(10)
         pg.display.flip()
 
-def drawBoard(screen, gamestate):
+def drawBoard(screen, gamestate):       # draws the entire board from the stored gamestate
     for x in range(GAME_SIZE):
         for y in range(GAME_SIZE):
             if ((x+y)%2==0):
