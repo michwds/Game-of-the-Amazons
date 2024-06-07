@@ -20,6 +20,7 @@ def main():
     loadAssets()
     running = True
     selected = ()
+    target = ()
     
     while running:                      # main game loop
         for event in pg.event.get():
@@ -29,24 +30,26 @@ def main():
                 x, y = pg.mouse.get_pos()
                 x = x // TILE_SIZE
                 y = y // TILE_SIZE
-                if not selected:
-                    selected = (x, y)
-                    if (game.counter.playerTurn() == 'White' and game.game[x][y] == Piece.whiteQueen or
-                           game.counter.playerTurn() == 'Black' and game.game[x][y] == Piece.blackQueen):
-                        valid = game.getValidMoveset(game.game[x][y])   #TODO: replace with a specific queen.moves
+                if (game.counter.playerTurn() == 'White' and game.game[x][y] == Piece.whiteQueen or
+                    game.counter.playerTurn() == 'Black' and game.game[x][y] == Piece.blackQueen):
+
+                    valid = game.getValidMoveset(game.game[x][y])   #TODO: replace with a specific queen.moves
+                    if not selected:
+                        selected = (x, y)
                         for tile in valid:
                             x, y = tile
                             screen.blit(ASSETS['highlight'], pg.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE))
-                else:
-                    valid = game.getValidMoveset(game.game[x][y])
-                    if (x, y) in valid:
-                        if game.phase == 'move':
-                            game.move(selected, (x, y))  # move the piece        #TODO: fix this method
-                        elif game.phase == 'shoot':
-                            game.shoot((x, y))  # shoot the arrow
-                        
                     else:
-                        selected = ()
+                        target = (x,y)
+                        if target in valid:
+                            match game.phase.current():
+                                case 'Move':
+                                    game.move(selected, target)  # move the piece
+                                case 'Shoot':
+                                    game.shoot(target)  # shoot the arrow
+                            selected = ()
+                        else:
+                            selected = ()
 
         drawBoard(screen, game)
         gameTime.tick(10)
