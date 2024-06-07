@@ -29,6 +29,23 @@ class GameState:
         self.counter.reset()
         self.phase.reset()
 
+    def isOver(self):
+        black, white = 0
+        for queen in self.queens.values():
+            queen.validate()
+            match queen.colour:
+                case 'Black':
+                    if queen.dead == True:
+                        black +=1
+                case 'White':
+                    if queen.dead == True:
+                        white +=1
+        if black == 4:
+            return 'White'
+        elif white == 4:
+            return 'Black'
+        else: return False
+
 
     def move(self, initial, final):     # move a piece from initial to final. Must take a pair of tuples as input.
         xi, yi = initial
@@ -141,11 +158,14 @@ class Queen:                    # TODO: add a method to count dead queens and en
         self.moves = GameState.getValidMoveset(self)
         self.dead = False
         self.colour = colour
-    def update(self, new):
-        self.x, self.y = new
+    def validate(self):
         self.moves = GameState.getValidMoveset(self)
         if not self.moves:
             self.dead = True
+    def update(self, new):
+        self.x, self.y = new
+        self.validate()
+
     
     
 
