@@ -22,19 +22,26 @@ class GameState:
         for i in self.width:
             for j in self.height:
                 self.game[i][j] = 0
-        self.game[0][3] = self.game[0][3] = self.game[6][0] = self.game[9][3] = Piece.blackQueen
+        self.game[0][3] = self.game[3][0] = self.game[6][0] = self.game[9][3] = Piece.blackQueen
         self.game[0][6] = self.game[3][9] = self.game[6][9] = self.game[9][6] = Piece.whiteQueen
+        self.queens = {(0,3): Queen(0,3, 'Black'), (3,0): Queen(3,0, 'Black'), (6,0): Queen(6,0, 'Black'), (9,3): Queen(9,3, 'Black'),
+                       (0,6): Queen(0,6, 'White'), (3,9): Queen(3,9, 'White'), (6,9): Queen(6,9, 'White'), (9,6): Queen(9,6, 'White')}
+        self.counter.reset()
+        self.phase.reset()
 
 
     def move(self, initial, final):     # move a piece from initial to final. Must take a pair of tuples as input.
         xi, yi = initial
         xf, yf = final
-
+        queen = self.queens[initial]    
         
         # TODO: so very much
 
         if self.counter.playerTurn() == 'White':
             if self.game[xi][yi] == Piece.whiteQueen and self.game[xf][yf] == Piece.empty:
+                self.queens.pop(initial)
+                queen.update(final)
+                self.queens[final] = queen
                 self.phase.next()
                 return True
         else:
@@ -129,10 +136,17 @@ class Phase:                    # phase tracker
 
 class Queen:                    # data holder helper class to use for gamestate checks later
     
-    def __init__(self, x, y) -> None:
+    def __init__(self, x, y, colour) -> None:
         self.x = x
         self.y = y
-        self.moves = GameState.getValidMoveset(self.x, self.y)
+        self.moves = GameState.getValidMoveset(self)
         self.dead = False
+        self.colour = colour
+    def update(self, new):
+        self.x, self.y = new
+        self.moves = GameState.getValidMoveset(self)
+        if not self.moves:
+            self.dead = True
+    
     
 

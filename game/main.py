@@ -33,9 +33,9 @@ def main():
                 if (game.counter.playerTurn() == 'White' and game.game[x][y] == Piece.whiteQueen or
                     game.counter.playerTurn() == 'Black' and game.game[x][y] == Piece.blackQueen):
 
-                    valid = game.getValidMoveset(game.game[x][y])   #TODO: replace with a specific queen.moves
+                    valid = game.queens[(x,y)].moves            #gets the valid moveset for the selected piece
                     if not selected:
-                        selected = (x, y)
+                        selected = (x,y)
                         for tile in valid:
                             x, y = tile
                             screen.blit(ASSETS['highlight'], pg.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE))
@@ -48,8 +48,8 @@ def main():
                                 case 'Shoot':
                                     game.shoot(target)  # shoot the arrow
                             selected = ()
-                        else:
-                            selected = ()
+                        #else:
+                        #    selected = ()
 
         drawBoard(screen, game)
         gameTime.tick(10)
