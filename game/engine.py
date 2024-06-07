@@ -8,12 +8,14 @@ class Piece(Enum):
     whiteQueen = auto()
     blackQueen = auto()
 
+
 class GameState: 
 
     def __init__(self, size) -> None:
         self.width = self.height = size
         self.game = [[Piece.empty for x in range(self.width)] for y in range(self.height)]
-        self.counter =  Turn()
+        self.counter = Turn()
+        self.phase = Phase()
 
     def newGame(self):
 
@@ -24,13 +26,27 @@ class GameState:
         self.game[0][6] = self.game[3][9] = self.game[6][9] = self.game[9][6] = Piece.whiteQueen
 
 
-    def move(self, xi, yi, xf, yf):
+    def move(self, initial, final):     # move a piece from initial to final. Must take a pair of tuples as input.
+        xi, yi = initial
+        xf, yf = final
+
         
         # TODO: so very much
 
         if self.counter.playerTurn() == 'White':
             if self.game[xi][yi] == Piece.whiteQueen and self.game[xf][yf] == Piece.empty:
+                self.phase.next()
                 return True
+        else:
+            return False
+        
+    def shoot(self, target):     # place an arrow at 'target' and advance the phase AND turn. Input must be a tuple. TODO: add validation.
+        x, y = target
+        if self.game[x][y] == Piece.empty:
+            self.game[x][y] = Piece.arrow
+            self.phase.next()
+            self.counter.next()
+            return True
         else:
             return False
 
@@ -97,6 +113,19 @@ class Turn:                     # turn number tracker
         else: return 'Black'
     def reset(self):
         self.turnNum=0
+
+class Phase:                    # phase tracker
+    
+    def __init__(self) -> None:
+        self.phase = 'Move'
+    def next(self):
+        if self.phase == 'Move':
+            self.phase = 'Shoot'
+        else: self.phase = 'Move'
+    def current(self):
+        return self.phase
+    def reset(self):
+        self.phase = 'Move'
 
 class Queen:                    # data holder helper class to use for gamestate checks later
     
