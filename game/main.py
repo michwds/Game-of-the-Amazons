@@ -38,18 +38,19 @@ def main():
                         selected = (x,y)
                         for tile in valid:
                             x, y = tile
-                            screen.blit(ASSETS['highlight'], pg.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE))
+                            screen.blit(ASSETS['highlight'], pg.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)) #TODO: add a highlight to the valid shots, update and remove move highlight after move is completed
                     else:
                         target = (x,y)
                         if target in valid:
                             match game.phase.current():
                                 case 'Move':
-                                    game.move(selected, target)  # move the piece
+                                    if game.move(selected, target):  # move the piece
+                                        selected = target
                                 case 'Shoot':
-                                    game.shoot(target)  # shoot the arrow
+                                    if game.shoot(target):  # shoot the arrow
+                                        selected = ()
+                        else:
                             selected = ()
-                        #else:
-                        #    selected = ()
 
         drawBoard(screen, game)
         gameTime.tick(10)

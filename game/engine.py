@@ -24,7 +24,7 @@ class GameState:
                 self.game[i][j] = 0
         self.game[0][3] = self.game[3][0] = self.game[6][0] = self.game[9][3] = Piece.blackQueen
         self.game[0][6] = self.game[3][9] = self.game[6][9] = self.game[9][6] = Piece.whiteQueen
-        self.queens = {(0,3): Queen(0,3, 'Black'), (3,0): Queen(3,0, 'Black'), (6,0): Queen(6,0, 'Black'), (9,3): Queen(9,3, 'Black'),
+        self.queens = {(0,3): Queen(0,3, 'Black'), (3,0): Queen(3,0, 'Black'), (6,0): Queen(6,0, 'Black'), (9,3): Queen(9,3, 'Black'),  # dictionary of queens using their position as key
                        (0,6): Queen(0,6, 'White'), (3,9): Queen(3,9, 'White'), (6,9): Queen(6,9, 'White'), (9,6): Queen(9,6, 'White')}
         self.counter.reset()
         self.phase.reset()
@@ -34,20 +34,19 @@ class GameState:
         xi, yi = initial
         xf, yf = final
         queen = self.queens[initial]    
-        
-        # TODO: so very much
-
-        if self.counter.playerTurn() == 'White':
-            if self.game[xi][yi] == Piece.whiteQueen and self.game[xf][yf] == Piece.empty:
-                self.queens.pop(initial)
-                queen.update(final)
-                self.queens[final] = queen
-                self.phase.next()
-                return True
-        else:
+        if final not in queen.moves or queen.dead == True:
             return False
+        else:
+            self.game[xi][yi] = Piece.empty
+            self.game[xf][yf] = queen.colour
+            self.queens.pop(initial)
+            queen.update(final)
+            self.queens[final] = queen
+            self.phase.next()
+            return True
+
         
-    def shoot(self, target):     # place an arrow at 'target' and advance the phase AND turn. Input must be a tuple. TODO: add validation.
+    def shoot(self, target):     # place an arrow at 'target' and advance the phase AND turn. Input must be a tuple.
         x, y = target
         if self.game[x][y] == Piece.empty:
             self.game[x][y] = Piece.arrow
@@ -134,7 +133,7 @@ class Phase:                    # phase tracker
     def reset(self):
         self.phase = 'Move'
 
-class Queen:                    # data holder helper class to use for gamestate checks later
+class Queen:                    # TODO: add a method to count dead queens and end the game when only one queen remains. make sure gamestate.getvalid works
     
     def __init__(self, x, y, colour) -> None:
         self.x = x
