@@ -118,11 +118,8 @@ class GameState:
             if isEmpty(self.game[x-i][y-i]) == True:
                 valid.append([x-i, y-i])
             else: break
-        if valid:                                   #update list of valid moves. If none, mark the queen as dead
-            queen.moves = valid
-        else:
-            queen.moves = valid
-            queen.dead = True
+        return valid
+
 
 class Turn:                     # turn number tracker
 
